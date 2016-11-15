@@ -1,0 +1,11 @@
+[Unit]
+Description=Automatically connect to VPN after config download
+Documentation=Documentation needed!
+After=network-online.service
+
+[Service]
+Type=simple
+ExecStart=/usr/share/autovpn/autovpn
+
+[Install]
+WantedBy=default.target

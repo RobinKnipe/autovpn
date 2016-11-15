@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# Watch the Downloads directory for new VPN config files
+inotifywait -mqe create --exclude ".*\.crdownload|\.org\.chromium\.Chromium\..*" @user_dir@/Downloads |
+  while read path event file
+  do
+    if [[ "${file}" =~ ^vpn-(hod-platform-dev|gro-lev-prod)-[0-9]{8}-[0-9]{4}( \([0-9]+\))?.ovpn$ ]]
+    then
+      # Get the VPN name
+      vpn=`echo ${file} | awk -F '-' '{print $2}'`
+
+      # Check if an old connection already exists
+      cons=`ps -ef|grep "openvpn.*vpn-${vpn}-.*.ovpn"|grep -v grep|awk '{print $2}'`
+      if [ -n "${cons}" ]
+      then
+        echo "Removing old '${vpn}' VPN connection..."
+        kill ${cons}
+      fi
+
+      # Connect to the VPN
+      echo "Connecting to the '${vpn}' VPN..."
+      openvpn --config "${path}${file}" &
+    fi
+  done
