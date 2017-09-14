@@ -44,4 +44,4 @@ $ systemctl status autovpn.service
            ├─31287 openvpn --config /home/robin/Downloads/vpn-hod-platform-dev-20161116-1659.ovpn
            └─31549 openvpn --config /home/robin/Downloads/vpn-gro-lev-prod-20161116-1700.ovpn
 ```
-The service also logs to the standard system log: `/var/logs/syslog` - so there maybe more information there if you are experiencing problems.
+The service also logs to the standard system log: `/var/log/syslog` - so there maybe more information there if you are experiencing problems.
