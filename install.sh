@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# check the script is run as root
+if [ `whoami` != "root" ] ; then
+  echo "ERROR: the installation program must be run by the 'root' user"
+  exit 1
+fi
+
 # Install autovpn
 
 user_dir="$1"
