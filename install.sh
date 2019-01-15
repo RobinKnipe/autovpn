@@ -11,25 +11,24 @@ unit_dir=/etc/systemd/system
 function install_prerequisits {
   if ! which inotifywait > /dev/null ; then
     echo 'Installing inotify-tools package'
-    apt-get update
-    apt-get install inotify-tools
+    apt update
+    apt install -y inotify-tools
   fi
 }
 
 # download the main autovpn script file
-# and configure it with the user's downloads directory
 function install_main_script {
   echo 'Installing the main autovpn script file'
-  mkdir -p ${script_dir}
-  curl -s "${repo}autovpn" | sed "s|@user_dir@|${user_dir}|" > ${script_dir}/autovpn
-  chmod +x ${script_dir}/autovpn
+  mkdir -p "${script_dir}"
+  curl -so "${script_dir}/autovpn" "${repo}autovpn"
+  chmod +x "${script_dir}/autovpn"
 }
 
-# download and activatee the autovpn systemd unit
+# download and activate the autovpn systemd unit
 function install_unit_file {
   echo 'Installing the autovpn systemd unit file'
   mkdir -p ${unit_dir}
-  curl -s -o "${unit_dir}/autovpn.service" "${repo}/autovpn.service"
+  curl -so "${unit_dir}/autovpn.service" "${repo}/autovpn.service"
   systemctl daemon-reload
   systemctl start autovpn.service
   systemctl enable autovpn.service
