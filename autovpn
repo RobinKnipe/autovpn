@@ -9,7 +9,7 @@ default_filename_pattern='^.+\.ovpn$'
 filename_pattern=${file_name_pattern:-$default_filename_pattern}
 default_exclude_files=".*\.crdownload|\.org\.chromium\.Chromium\..*"
 exclude_files="${exclude_files:-$default_exclude_files}"
-default_download_dir="${HOME}/Downloads"
+default_download_dir="${USER_HOME}/Downloads"
 download_dir="${download_dir:-$default_download_dir}"
 
 # Watch the Downloads directory for new VPN config files
