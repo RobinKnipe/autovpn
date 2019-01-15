@@ -19,7 +19,7 @@ default.target
 ```
 
 ## Configuration
-When the script starts, it looks for a file `~/.config/autovpn.properties`. This file contains a few options to tailor the script:
+When the service starts, it looks for a file `~/.config/autovpn.properties`. This file contains a few options to tailor the script:
 
 ### Download folder location
 By default the monitored folder is: `"${HOME}/Downloads"`. To change it, add the `download_dir` property, as in the following example:
@@ -42,6 +42,9 @@ By default Chromium's temporary files will be ignored (regex: `.*\.crdownload|\.
 # ignore all files with the extension ".part"
 exclude_files=".*\.part"
 ```
+
+### Auto-remove used VPN config files
+By default the service will remove the VPN configuration files after it tries to connect, so that the downloads directory does not get unnecessarily cluttered. To disable this behaviour, set the `auto_remove` option to `no` or `false`.
 
 ### Important note
 Simply making changes to the properties file will not take effect until the service restarts - this happens when the OS boots, or can be manualy triggered by running:
