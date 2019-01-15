@@ -1,10 +1,18 @@
 #!/bin/bash
 
+# setup the regex pattern for checking vpn config file names
+if [ -f "${props_file}" ] ; then
+  source ${props_file}
+else
+  filename_pattern='^.+\.ovpn$'
+fi
+
 # Watch the Downloads directory for new VPN config files
 inotifywait -mqe create --exclude ".*\.crdownload|\.org\.chromium\.Chromium\..*" "${HOME}/Downloads" |
   while read path event file
   do
-    if [[ "${file}" =~ ^vpn-(hod-platform-dev|gro-lev-prod)-[0-9]{8}-[0-9]{4}( \([0-9]+\))?.ovpn$ ]]
+    # Check if the file looks like a vpn config we want
+    if [[ "${file}" =~ ${filename_pattern} ]]
     then
       # Get the VPN name
       vpn=`echo ${file} | awk -F '-' '{print $2}'`
