@@ -7,17 +7,46 @@ Monitor a user's `Downloads` folder for VPN config files and automatically use t
 There is an installation script `install.sh` provided which should work for Ubuntu (and derivatives), and will hopefully give any other curious folk an idea of the manual steps required.
 To run the installation script enter the following into a terminal:
 ```bash
-curl -s 'https://raw.githubusercontent.com/RobinKnipe/autovpn/master/install.sh' | sudo bash -s $HOME
+curl -s 'https://raw.githubusercontent.com/RobinKnipe/autovpn/master/install.sh' | sudo bash -s
 ```
-You can check everything worked by entering the following command - note the `autovpn.service` unit is listed as the second item under the `default.target` (the dot next to it should be green):
+You can check everything worked with `sudo systemctl list-dependencies` - you should see something like the following example - note the `autovpn.service` unit is listed as the second item under the `default.target` (the dot next to it should _hopefully_ be green):
 ```bash
-$ systemctl list-dependencies
+sudo systemctl list-dependencies
 default.target
 ● ├─accounts-daemon.service
 ● ├─autovpn.service
-● ├─cpufrequtils.service
-● ├─grub-common.service
 ...
+```
+
+## Configuration
+When the script starts, it looks for a file `~/.config/autovpn.properties`. This file contains a few options to tailor the script:
+
+### Download folder location
+By default the monitored folder is: `"${HOME}/Downloads"`. To change it, add the `download_dir` property, as in the following example:
+```properties
+# look in "/tmp/downloads" instead
+download_dir=/tmp/downloads
+```
+
+### VPN config filename regex pattern
+By default any downloaded VPN file matching the general filename patter `*.ovpn` (regex: `.+\.ovpn`) will be connected. To change this add the `filename_pattern` property, as in the following example:
+```properties
+# only allow autovpn to connect to "my-connection.ovpn" and "some-other.ovpn"
+filename_pattern='^(my-connection|some-other).ovpn$'
+```
+NOTE: The single quotes (') around the regex in the pattern are important.
+
+### Download files to ignore pattern
+By default Chromium's temporary files will be ignored (regex: `.*\.crdownload|\.org\.chromium\.Chromium\..*`). To change this add the `exclude_files` property, as in the following example:
+```properties
+# ignore all files with the extension ".part"
+exclude_files=".*\.part"
+```
+
+### Important note
+Simply making changes to the properties file will not take effect until the service restarts - this happens when the OS boots, or can be manualy triggered by running:
+```bash
+sudo systemctl restart autovpn.service
 ```
 
 ## Dependencies
@@ -30,7 +59,7 @@ This project has been built as a `systemd` service unit (`autovpn.service`), to 
 ## Troubleshooting
 You can find more information about the unit by running `systemctl status autovpn.service` in your terminal. The following snippet shows an example of the service running healthily, and the last two lines show two VPNs that were autoatically connected:
 ```bash
-$ systemctl status autovpn.service
+sudo systemctl status autovpn.service
 ● autovpn.service - Automatically connect to VPN after config download
    Loaded: loaded (/etc/systemd/system/autovpn.service; enabled; vendor preset: enabled)
    Active: active (running) since Wed 2016-11-16 16:22:37 GMT; 1h 27min ago
