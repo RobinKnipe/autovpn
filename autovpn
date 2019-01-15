@@ -35,7 +35,9 @@ inotifywait -mqe create --exclude "${exclude_files}" "${default_download_dir}" |
       openvpn --config "${path}${file}" &
 
       # Wait a mo then remove the VPN config file
-      sleep 2
-      rm "${path}${file}"
+      if [ "${auto_remove}" != "no" ] || [ "${auto_remove}" != "false" ] ; then
+        sleep 2
+        rm "${path}${file}"
+      fi
     fi
   done
