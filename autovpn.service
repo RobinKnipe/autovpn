@@ -1,6 +1,6 @@
 [Unit]
 Description=Automatically connect to VPN after config download
-#Documentation=Documentation needed!
+Documentation=https://github.com/RobinKnipe/autovpn
 After=network-online.service
 
 [Service]
