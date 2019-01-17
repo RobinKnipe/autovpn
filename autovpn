@@ -17,7 +17,7 @@ inotifywait -mqe create --exclude "${exclude_files}" "${default_download_dir}" |
   while read path event file
   do
     # Check if the file looks like VPN config we want
-    if [[ "${file}" =~ ${filename_pattern} ]]
+    if [ "${event}" = "CREATE" ] && [[ "${file}" =~ ${filename_pattern} ]]
     then
       # Get the VPN name
       vpn=`echo ${file} | awk -F '-' '{print $2}'`
