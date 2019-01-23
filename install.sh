@@ -30,11 +30,14 @@ function install_prerequisits {
 
 # setup the properties file
 function install_properties {
-  mkdir -p "${user_dir}/.config"
   props="${user_dir}/.config/autovpn.properties"
-  echo "# the location of the user's downloads folder monitored by autovpn" > ${props}
-  echo "download_dir=${user_dir}/Downloads" >> ${props}
-  chown `ls -ld ${user_dir}/ | awk '{print $3":"$4}'` "${user_dir}/.config" "${props}"
+  # ...unless it already exists
+  if [ ! -e "${props}" ] ; then
+    mkdir -p "${user_dir}/.config"
+    echo "# the location of the user's downloads folder monitored by autovpn" > ${props}
+    echo "download_dir=${user_dir}/Downloads" >> ${props}
+    chown `ls -ld ${user_dir}/ | awk '{print $3":"$4}'` "${user_dir}/.config" "${props}"
+  fi
 }
 
 # download the main autovpn script file
