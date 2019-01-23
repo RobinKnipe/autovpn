@@ -5,8 +5,8 @@ if [ -f "${props_file}" ] ; then
   source ${props_file}
 fi
 # replace empty values with defaults
-default_filename_pattern='^.+\.ovpn$'
-filename_pattern=${file_name_pattern:-$default_filename_pattern}
+default_open_filename_pattern='^.+\.ovpn$'
+open_filename_pattern=${file_name_pattern:-$default_filename_pattern}
 default_exclude_files=".*\.crdownload|\.org\.chromium\.Chromium\..*"
 exclude_files="${exclude_files:-$default_exclude_files}"
 default_download_dir="${USER_HOME}/Downloads"
@@ -23,11 +23,14 @@ inotifywait -mqe create --exclude "${exclude_files}" "${default_download_dir}" |
       vpn=`echo ${file} | awk -F '-' '{print $2}'`
 
       # Check if an old connection already exists
-      cons=`ps -ef|grep "openvpn.*vpn-${vpn}-.*.ovpn"|grep -v grep|awk '{print $2}'`
-      if [ -n "${cons}" ]
-      then
-        echo "Removing old '${vpn}' VPN connection..."
-        kill ${cons}
+      if [ -n "${close_filename_pattern}" ] ; then
+        close_file_match=`grep -Eo "${close_filename_pattern}"`
+        cons=`pgrep --list-full openvpn | grep "${close_file_match}" | awk '{print $2}'`
+        if [ -n "${cons}" ]
+        then
+          echo "Removing old '${close_file_match}' VPN connection..."
+          kill ${cons}
+        fi
       fi
 
       # Connect to the VPN
