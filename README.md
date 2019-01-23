@@ -46,6 +46,21 @@ exclude_files=".*\.part"
 ### Auto-remove used VPN config files
 By default the service will remove the VPN configuration files after it tries to connect, so that the downloads directory does not get unnecessarily cluttered. To disable this behaviour, set the `auto_remove` option to `no` or `false`.
 
+### Auto close old VPN connections
+If the properties file contains a value for property `close_filename_pattern`, this regex will be used to find old VPN connections and close them. This is useful in cases where VPN configuration files have to be downloaded regularly (e.g. for short-lived connections), often the configuration filename will contain the date and/or time.
+
+For example - if we consider the following three configuration filenames:
+```
+vpn-my-con-1324.ovpn
+vpn-site-con-1203.ovpn
+vpn-other-con-2155.ovpn
+```
+Each filename contains the name of the connection followed by the time it was downloaded. Assuming connections have already been automatically started for each file, when another configuration file is downloaded named `vpn-my-con-1430.ovpn`, the following property entry would close the existing connection from the file `vpn-my-con-1324.ovpn`:
+```properties
+close_filename_pattern="vpn-(\w+-)"
+```
+Similarly if new configurations where downloaded for the other connections, the old connection would be closed before starting the new one. The regex matches a part of the downloaded filename and it is this match that is used to find old connections - in the above example the regex would match "`vpn-my-con-`" from `vpn-my-con-1430.ovpn`, and then use that to find the connection opened for file `vpn-my-con-1324.ovpn`.
+
 ### Important note
 Simply making changes to the properties file will not take effect until the service restarts - this happens when the OS boots, or can be manualy triggered by running:
 ```bash
