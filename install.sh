@@ -15,6 +15,7 @@ fi
 # Install autovpn
 
 user_dir="$1"
+props="${user_dir}/.config/autovpn.properties"
 repo="https://raw.githubusercontent.com/RobinKnipe/autovpn/master/"
 script_dir=/usr/share/autovpn
 unit_dir=/etc/systemd/system
@@ -30,7 +31,6 @@ function install_prerequisits {
 
 # setup the properties file
 function install_properties {
-  props="${user_dir}/.config/autovpn.properties"
   # ...unless it already exists
   if [ ! -e "${props}" ] ; then
     mkdir -p "${user_dir}/.config"
@@ -62,6 +62,7 @@ function install_unit_files {
   unit_env="${unit_dir}/autovpn.service.d/env.conf"
   echo "[Service]" > ${unit_env}
   echo "Environment=\"USER_HOME=${user_dir}\"" >> ${unit_env}
+  echo "Environment=\"PROPS_FILE=${props}\"" >> ${unit_env}
 
   curl -so "${unit_dir}/autovpn.service" "${repo}/autovpn.service"
   systemctl daemon-reload
