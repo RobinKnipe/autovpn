@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # check for properties file
-if [ -f "${props_file}" ] ; then
-  source ${props_file}
+if [ -f "${PROPS_FILE}" ] ; then
+  source ${PROPS_FILE}
 fi
 # replace empty values with defaults
 default_filename_pattern='^.+\.ovpn$'
@@ -20,23 +20,27 @@ inotifywait -mqe create --exclude "${exclude_files}" "${default_download_dir}" |
     if [ "${event}" = "CREATE" ] && [[ "${file}" =~ ${filename_pattern} ]]
     then
       # Get the VPN name
-      vpn=`echo ${file} | awk -F '-' '{print $2}'`
+      if [ -n "${vpn_name_suffix}" ] ; then
+        vpn=`echo ${file} | sed -E "s/${vpn_name_suffix}//"`
+      fi
+      vpn=${vpn:-$file}
 
       # Check if an old connection already exists
-      cons=`ps -ef|grep "openvpn.*vpn-${vpn}-.*.ovpn"|grep -v grep|awk '{print $2}'`
+      cons=`pgrep --list-full openvpn | grep "${vpn}" | awk '{print $1}'`
       if [ -n "${cons}" ]
       then
-        echo "Removing old '${vpn}' VPN connection..."
+        echo "Closing old connection: '${vpn}'..."
         kill ${cons}
       fi
 
       # Connect to the VPN
-      echo "Connecting to the '${vpn}' VPN..."
+      echo "Connecting to: '${vpn}'..."
       openvpn --config "${path}${file}" &
 
       # Wait a mo then remove the VPN config file
       if [ "${auto_remove}" != "no" ] || [ "${auto_remove}" != "false" ] ; then
         sleep 2
+        echo "Removing old configuration file: ${file}"
         rm "${path}${file}"
       fi
     fi
