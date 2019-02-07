@@ -19,7 +19,7 @@ default.target
 ```
 
 ## Configuration
-When the service starts, it looks for a file `~/.config/autovpn.properties`. This file contains a few options to tailor the script:
+When the service starts, it looks for a file `${HOME}/.config/autovpn.properties`. This file contains a few options to tailor the script:
 
 ### Download folder location
 By default the monitored folder is: `"${HOME}/Downloads"`. To change it, add the `download_dir` property, as in the following example:
@@ -35,6 +35,22 @@ By default any downloaded VPN file matching the general filename patter `*.ovpn`
 filename_pattern='^(my-connection|some-other).ovpn$'
 ```
 NOTE: The single quotes (') around the regex in the pattern are important.
+
+### Auto close old VPN connections
+Before starting a new connection, the service will try to close any existing VPN connection that was started with a configuration file with the same name. Often configuration files are only valid for a limited time, and a timestamp forms part of the filename - in these cases the `vpn_name_suffix` property can be set to indicate the filename ending, as in the following examples:
+```properties
+# the current date suffix, e.g. my-connection-20190212.ovpn
+vpn_name_suffix='-[0-9]{8}.ovpn'
+# the current date and time suffix, e.g. my-connection-20190212-1354.ovpn
+vpn_name_suffix='-[0-9]{8}-[0-9]{4}.ovpn'
+```
+It may also be useful to reuse this suffix as part of the `filename_pattern` property, as in this example:
+```properties
+# current date, time, and count (for duplicate names), e.g. "con-20190212-1354 (2).ovpn"
+vpn_name_suffix='-[0-9]{8}-[0-9]{4}( \([0-9]+\))?\.ovpn'
+# matches names starting with "vpn", then dash separated words, ending with above suffix
+filename_pattern="^vpn(-\w+)*${vpn_name_suffix}$"
+```
 
 ### Download files to ignore pattern
 By default Chromium's temporary files will be ignored (regex: `.*\.crdownload|\.org\.chromium\.Chromium\..*`). To change this add the `exclude_files` property, as in the following example:
