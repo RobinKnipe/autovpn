@@ -6,7 +6,7 @@ if [ -f "${PROPS_FILE}" ] ; then
 fi
 # replace empty values with defaults
 default_filename_pattern='^.+\.ovpn$'
-filename_pattern=${file_name_pattern:-$default_filename_pattern}
+filename_pattern=${filename_pattern:-$default_filename_pattern}
 default_exclude_files=".*\.crdownload|\.org\.chromium\.Chromium\..*"
 exclude_files="${exclude_files:-$default_exclude_files}"
 default_download_dir="${USER_HOME}/Downloads"
