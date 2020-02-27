@@ -8,13 +8,18 @@ fi
 
 # check the user home dir is specified
 if [ ! -d "$1" ] ; then
-  echo "ERROR: the script must be called with one parameter, the location of the user's home directory"
-  exit 2
+  user_dir=`grep '1000:1000' /etc/passwd | awk -F ':' '{print $6}'`
+  if [ ! -d "${user_dir}" ] ; then
+    echo "ERROR: could not determine the user's home directory."
+    echo "The script must be called with one parameter, the location of the user's home directory."
+    exit 2
+  fi
+else
+  user_dir="$1"
 fi
 
 # Install autovpn
 
-user_dir="$1"
 props="${user_dir}/.config/autovpn.properties"
 repo="https://raw.githubusercontent.com/RobinKnipe/autovpn/master/"
 script_dir=/usr/share/autovpn
