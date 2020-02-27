@@ -5,9 +5,9 @@ Monitor a user's `Downloads` folder for VPN config files and automatically use t
 
 ## Installation
 There is an installation script `install.sh` provided which should work for Ubuntu (and derivatives), and will hopefully give any other curious folk an idea of the manual steps required.
-To run the installation script enter the following into a terminal:
+To run the installation script (for the default user) enter the following into a terminal:
 ```bash
-curl -s 'https://raw.githubusercontent.com/RobinKnipe/autovpn/master/install.sh' | sudo bash -s $HOME
+curl -s 'https://raw.githubusercontent.com/RobinKnipe/autovpn/master/install.sh' | sudo bash -s
 ```
 You can check everything worked with `sudo systemctl list-dependencies` - you should see something like the following example - note the `autovpn.service` unit is listed as the second item under the `default.target` (the dot next to it should _hopefully_ be green):
 ```bash
@@ -16,6 +16,11 @@ default.target
 ● ├─accounts-daemon.service
 ● ├─autovpn.service
 ...
+```
+### NOTE:
+If the install script fails, because it can't locate the user's home directory - or if support for another user (i.e. not the default) is required - the installation script can be run specifying the target home directory as follows:
+```bash
+curl -s 'https://raw.githubusercontent.com/RobinKnipe/autovpn/master/install.sh' | sudo bash -s $HOME
 ```
 
 ## Configuration
