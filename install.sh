@@ -49,7 +49,7 @@ function install_properties {
 function install_main_script {
   echo 'Installing the main autovpn script file'
   mkdir -p "${script_dir}"
-  curl -so "${script_dir}/autovpn" "${repo}autovpn"
+  curl -Lso "${script_dir}/autovpn" "${repo}autovpn"
   chmod +x "${script_dir}/autovpn"
 }
 
@@ -69,7 +69,7 @@ function install_unit_files {
   echo "Environment=\"USER_HOME=${user_dir}\"" >> ${unit_env}
   echo "Environment=\"PROPS_FILE=${props}\"" >> ${unit_env}
 
-  curl -so "${unit_dir}/autovpn.service" "${repo}/autovpn.service"
+  curl -Lso "${unit_dir}/autovpn.service" "${repo}/autovpn.service"
   systemctl daemon-reload
   systemctl start autovpn.service
   systemctl enable autovpn.service
